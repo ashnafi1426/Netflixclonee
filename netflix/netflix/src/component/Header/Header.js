@@ -27,7 +27,6 @@ const Header = () => {
             <li><NotificationsIcon/></li>
             <li><AccountBoxIcon/></li>
             <li><ArrowDropDownIcon/></li>
-            
         </ul>
       </div>
     </div>
