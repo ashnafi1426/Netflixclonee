@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from '../../utils/axios';
 import requests from '../../utils/request';
 // import Button from '@mui/material/Button';
-// import css from "./banner.css";
+import  "./banner.css";
 const Banner = () => {
     const [movie,setmovie]=useState({})
     useEffect(()=>{
@@ -11,12 +11,14 @@ const Banner = () => {
                 const request=await axios.get(requests.fetchNetflixOriginals)
                 console.log(request);
                 setmovie(request.data.results[Math.floor(Math.random()*requests.data.results.length)]);
-
             }catch (error){
           console.log("error",error);
             }
         })()
     },[])
+    function truncate(str,n){
+        return str?.length>n?str.substr(0,n-1)+'...':str;
+    }
   return (
     <div className='banner'
      style={{
@@ -33,7 +35,7 @@ const Banner = () => {
                 <button className='banner_button play'>play</button>
                 <button className='banner_button'>My list</button>
             </div>
-            {/* <h1 className='banner_description'>{truncate(movie?.overview,150)}</h1> */}
+            <h1 className='banner_description'>{truncate(movie?.overview,150)}</h1>
         </div>
        <div className='banner_fadeBottom'/>
     </div>
