@@ -1,24 +1,24 @@
 import React from 'react';
 import Row from '../Row/Row';
-import requests from '../../../utils/request';
+import { requests } from '../../../utils/request';
 
 const Rowlist = () => {
   return (
-    <>
+    <div className="rowlist">
       <Row
-          title="NETFLIX ORIGINAL"
-          fetchurl={requests.fetchNetflixOriginals}
+        title="NETFLIX ORIGINALS"
+        fetchUrl={requests.fetchNetflixOriginals}
+        isLargeRow
       />
-      <Row title="Top Rated" fetchUrl={requests.fetchTopRatedMovies}/>
-      <Row title="Action Movies" fetchUrl={requests.fetchActionMovies}/>
-      <Row title="Comedy Movies" fetchUrl={requests.fetchComedyMovies}/>
-      <Row title="Horror Movies" fetchUrl={requests.fetchHorrorMovies}/>
-      <Row title="Romance Movies" fetchUrl={requests.fetchRomanceMovies}/>
-      <Row title="TV Shows" fetchUrl={requests.fetchTvShow}/>
-      <Row title="Documentaries" fetchUrl={requests.fetchDocumentaries}/>
+      <Row title="Trending Now" fetchUrl={requests.fetchTrending} />
+      <Row title="Top Rated" fetchUrl={requests.fetchTopRated} />
+      <Row title="Action Movies" fetchUrl={requests.fetchActionMovies} />
+      <Row title="Comedy Movies" fetchUrl={requests.fetchComedyMovies} />
+      <Row title="Horror Movies" fetchUrl={requests.fetchHorrorMovies} />
+      <Row title="Romance Movies" fetchUrl={requests.fetchRomanceMovies} />
+      <Row title="Documentaries" fetchUrl={requests.fetchDocumentaries} />
+    </div>
+  );
+};
 
-    </>
-  )
-}
-
-export default Rowlist
+export default Rowlist;

@@ -1,61 +1,80 @@
-import React, { useEffect, useState } from 'react'
-import "./Row.css";
-// import movieTrailer from movieTrailer;
+import React, { useEffect, useState } from 'react';
+import axios from '../../../utils/axios';
+import "./row.css";
 
-// import axios from 'axios';
-import axios  from '../../../utils/axios';
-const Row = ({title,fetchurl,isLargRow}) => {
-  const [movies,setmovie]=useState([]);
-  const [trailerUrl,setTrailerUrl]=useState(" ");
-  const base_url="https://image.tmdb.org/t/p/original";
-  useEffect(()=>{
-    (async()=>{
-    try{
-      console.log(fetchUrl)
-      const request=await axios.get(`http://localhost:4000/api/${fetchUrl}`);
-      console.log(request);
-      setmovie(request.data.results);
-    }catch(error){
-      console.log('error',error)
-    }
-    })()
-  },[fetchurl]);
-  const handleClick=(movie)=>{
-    if(trailerUrl){
-      setTrailerUrl('')
-    }else{
-      movieTrailer().then(()=>{
-        console.log(url)
-        const urlParams=newURLSearchParams(new URL(url).search)
-        console.log(urlParams)
-        console.log(urlParams.get('v'))
-        setTrailerUrl(urlParams.get('v'));
-            })
-    }
-  }
-  const opts={
-    height:'390',
-    width:'100%',
-    playerVars:{
-      autoplay:1,
-    },
-  }
-  return (
-    <div className='row'>
-      <h1>{title}</h1>
-      <div className='row_posters'>
-      { movies?.map((movie,index)=>{
-        <img key={index} src={'${base_url}${isLargeRow ? movie.poster_path:movie.backdrop_path}'} alt={movie.name} className={'row_poster${isLargRow && "row_posterLarge"}'}
-        />
-      })}
-      </div>
-      {
-        // <div style={{padding:'40px'}}>
-        // {trailerUrl && <youTube videoId={trailerUrl} opts={opts}/>}
-        // </div>
+const Row = ({ title, fetchUrl, isLargeRow = false }) => {
+  const [movies, setMovies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(fetchUrl);
+        
+        if (!isMounted) return;
+        
+        if (!response.data?.results) {
+          throw new Error("Invalid data structure");
+        }
+
+        setMovies(response.data.results.filter(movie => movie.poster_path));
+      } catch (err) {
+        if (isMounted) {
+          setError(err.message);
+          console.error("Row Error:", {
+            url: fetchUrl,
+            error: err.message,
+            response: err.response?.data
+          });
+        }
+      } finally {
+        if (isMounted) setLoading(false);
       }
+    };
+    
+    fetchData();
+    
+    return () => { isMounted = false };
+  }, [fetchUrl]);
+
+  const getImagePath = (movie) => {
+    const path = isLargeRow ? movie.poster_path : movie.backdrop_path;
+    return path 
+      ? `https://image.tmdb.org/t/p/w500${path}`
+      : 'https://via.placeholder.com/500x280?text=No+Image';
+  };
+
+  return (
+    <div className="row">
+      <h2>{title}</h2>
+      
+      {loading ? (
+        <div className="row__loading">Loading...</div>
+      ) : error ? (
+        <div className="row__error">Error: {error}</div>
+      ) : movies.length === 0 ? (
+        <div className="row__empty">No movies available</div>
+      ) : (
+        <div className="row_posters">
+          {movies.map((movie) => (
+            <img
+              key={movie.id}
+              src={getImagePath(movie)}
+              alt={movie.title || movie.name || "Movie"}
+              className={`row_poster ${isLargeRow && "row_posterLarge"}`}
+              loading="lazy"
+              onError={(e) => {
+                e.target.src = 'https://via.placeholder.com/500x280?text=Image+Error';
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
-  )
-}
+  );
+};
 
 export default Row;
