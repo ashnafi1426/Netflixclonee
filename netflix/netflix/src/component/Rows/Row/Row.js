@@ -1,76 +1,74 @@
-import React, { useEffect, useState } from 'react';
-import axios from '../../../utils/axios';
+import React, { useEffect, useState, useRef } from "react";
+import axios from "../../../utils/axios";
+import movieTrailer from "movie-trailer";
+import YouTube from "react-youtube";
 import "./row.css";
 
-const Row = ({ title, fetchUrl, isLargeRow = false }) => {
+const Row = ({ title, fetchUrl, isLargeRow }) => {
   const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [trailerUrl, setTrailerUrl] = useState("");
+  const rowRef = useRef(null);
 
   useEffect(() => {
-    let isMounted = true;
-    
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(fetchUrl);
-        
-        if (!isMounted) return;
-        
-        if (!response.data?.results) {
-          throw new Error("Invalid data structure");
-        }
-
-        setMovies(response.data.results.filter(movie => movie.poster_path));
-      } catch (err) {
-        if (isMounted) {
-          setError(err.message);
-          console.error("Row Error:", {
-            url: fetchUrl,
-            error: err.message,
-            response: err.response?.data
-          });
-        }
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-    
+    async function fetchData() {
+      const request = await axios.get(
+        `https://api.themoviedb.org/3${fetchUrl}`
+      );
+      setMovies(request.data?.results || []);
+    }
     fetchData();
-    
-    return () => { isMounted = false };
   }, [fetchUrl]);
 
-  const getImagePath = (movie) => {
-    const path = isLargeRow ? movie.poster_path : movie.backdrop_path;
-    return path 
-      ? `https://image.tmdb.org/t/p/w500${path}`
-      : 'https://via.placeholder.com/500x280?text=No+Image';
+  const handleClick = (movie) => {
+    movieTrailer(movie?.name || movie?.title)
+      .then((url) => {
+        const id = new URLSearchParams(new URL(url).search).get("v");
+        setTrailerUrl(id);
+      })
+      .catch(() => setTrailerUrl(""));
+  };
+
+  // 👉 Scroll handlers
+  const scrollLeft = () => {
+    rowRef.current.scrollBy({ left: -500, behavior: "smooth" });
+  };
+
+  const scrollRight = () => {
+    rowRef.current.scrollBy({ left: 500, behavior: "smooth" });
   };
 
   return (
-    <div className="row">
-      <h2>{title}</h2>
-      
-      {loading ? (
-        <div className="row__loading">Loading...</div>
-      ) : error ? (
-        <div className="row__error">Error: {error}</div>
-      ) : movies.length === 0 ? (
-        <div className="row__empty">No movies available</div>
-      ) : (
-        <div className="row_posters">
+    <div className="container-fluid mb-4 row-wrapper">
+      <h4 className="text-white mb-2">{title}</h4>
+
+      <div className="row-container">
+        {/* LEFT BUTTON */}
+        <button className="scroll-btn left" onClick={scrollLeft}>
+          &#10094;
+        </button>
+
+        {/* MOVIES */}
+        <div className="movie-row" ref={rowRef}>
           {movies.map((movie) => (
             <img
               key={movie.id}
-              src={getImagePath(movie)}
-              alt={movie.title || movie.name || "Movie"}
-              className={`row_poster ${isLargeRow && "row_posterLarge"}`}
-              loading="lazy"
-              onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/500x280?text=Image+Error';
-              }}
+              className={`movie-poster ${isLargeRow ? "large" : ""}`}
+              src={`https://image.tmdb.org/t/p/original${movie.poster_path}`}
+              onClick={() => handleClick(movie)}
+              alt={movie.name}
             />
           ))}
+        </div>
+
+        {/* RIGHT BUTTON */}
+        <button className="scroll-btn right" onClick={scrollRight}>
+          &#10095;
+        </button>
+      </div>
+
+      {trailerUrl && (
+        <div className="mt-3">
+          <YouTube videoId={trailerUrl} />
         </div>
       )}
     </div>

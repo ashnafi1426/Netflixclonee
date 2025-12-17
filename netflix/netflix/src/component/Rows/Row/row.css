@@ -1,62 +1,75 @@
-.row {
-  margin-left: 20px;
-  color: white;
-  margin-bottom: 30px;
+/* Wrapper */
+.row-wrapper {
+  position: relative;
 }
 
-.row h2 {
-  font-size: 1.4rem;
-  margin-bottom: 10px;
-}
-
-.row_posters {
+/* Container holding buttons + row */
+.row-container {
+  position: relative;
   display: flex;
-  overflow-y: hidden;
-  overflow-x: scroll;
-  padding: 20px 0;
-  scrollbar-width: none;
+  align-items: center;
 }
 
-.row_posters::-webkit-scrollbar {
+/* Movie row */
+.movie-row {
+  display: flex;
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding: 10px 0;
+}
+.movie-row::-webkit-scrollbar {
   display: none;
 }
 
-.row_poster {
-  width: 100%;
+/* Movie posters */
+.movie-poster {
   max-height: 150px;
-  object-fit: contain;
   margin-right: 15px;
-  transition: transform 450ms;
+  cursor: pointer;
+  transition: transform 0.3s;
   border-radius: 4px;
 }
 
-.row_poster:hover {
+.movie-poster:hover {
   transform: scale(1.08);
-  opacity: 0.9;
 }
 
-.row_posterLarge {
+.movie-poster.large {
   max-height: 250px;
 }
 
-.row_posterLarge:hover {
-  transform: scale(1.09);
+/* Scroll buttons */
+.scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(20, 20, 20, 0.7);
+  color: white;
+  border: none;
+  font-size: 2rem;
+  width: 45px;
+  height: 100px;
+  cursor: pointer;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+/* Show buttons on hover */
+.row-container:hover .scroll-btn {
+  opacity: 1;
 }
 
-/* State indicators */
-.row__loading,
-.row__error,
-.row__empty {
-  padding: 20px;
-  background: rgba(20, 20, 20, 0.7);
-  border-radius: 4px;
-  margin-top: 10px;
+/* Left & Right positioning */
+.scroll-btn.left {
+  left: 0;
 }
 
-.row__error {
-  color: #e50914;
+.scroll-btn.right {
+  right: 0;
 }
 
-.row__empty {
-  color: #777;
+/* Button hover */
+.scroll-btn:hover {
+  background-color: rgba(0, 0, 0, 0.9);
 }

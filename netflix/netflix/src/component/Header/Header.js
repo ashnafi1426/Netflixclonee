@@ -1,38 +1,38 @@
-import SearchIcon from '@mui/icons-material/Search';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import AccountBoxIcon from '@mui/icons-material/AccountBox';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import React from 'react';
-import "./header.css"
-import NetflixLogo from '../../assets/image/Netflix_Logo_PMS.png'
+import React from "react";
+import { Navbar, Nav, Container } from "react-bootstrap";
+import SearchIcon from "@mui/icons-material/Search";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import NetflixLogo from "../../assets/image/Netflix_Logo_PMS.png";
 
 const Header = () => {
   return (
-  <div className='header_outer_container'>
-    <div className='header_container'>
-      <div className='header_left'>
-        <ul>
-            <li><img src={NetflixLogo} alt= "netflix Logo" width={100}/></li>
-            <li>Home</li>
-            <li>Tvshow</li>
-            <li>Movies</li>
-            <li>Latest</li>
-            <li>Mylist</li>
-            <li>Browse by languages</li>
-        </ul>
-      </div>
-      <div className='header_right'>
-        <ul>
-            <li><SearchIcon/></li>
-            <li><NotificationsIcon/></li>
-            <li><AccountBoxIcon/></li>
-            <li><ArrowDropDownIcon/></li>
-        </ul>
-      </div>
-    </div>
-  </div> 
-   
-  )
-}
+    <Navbar bg="dark" variant="dark" expand="lg" fixed="top">
+      <Container fluid>
+        <Navbar.Brand href="#">
+          <img src={NetflixLogo} width="100" alt="Netflix" />
+        </Navbar.Brand>
 
-export default Header
+        <Navbar.Toggle />
+
+        <Navbar.Collapse>
+          <Nav className="me-auto">
+            <Nav.Link>Home</Nav.Link>
+            <Nav.Link>TV Shows</Nav.Link>
+            <Nav.Link>Movies</Nav.Link>
+            <Nav.Link>Latest</Nav.Link>
+            <Nav.Link>My List</Nav.Link>
+          </Nav>
+
+          <Nav>
+            <Nav.Link><SearchIcon /></Nav.Link>
+            <Nav.Link><NotificationsIcon /></Nav.Link>
+            <Nav.Link><AccountBoxIcon /></Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
+  );
+};
+
+export default Header;
